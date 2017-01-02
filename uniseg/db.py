@@ -50,14 +50,34 @@ if _dbpath:
 else:
     _conn = None
 
+db = dict()
+cur = _conn.cursor()
+
+cur.execute('select cp, value from GraphemeClusterBreak')
+db["GraphemeClusterBreak"] = dict()
+for cp, value, in cur:
+    db["GraphemeClusterBreak"][cp] = value
+
+cur.execute('select cp, value from WordBreak')
+db["WordBreak"] = dict()
+for cp, value, in cur:
+    db["WordBreak"][cp] = value
+
+cur.execute('select cp, value from SentenceBreak')
+db["SentenceBreak"] = dict()
+for cp, value, in cur:
+    db["SentenceBreak"][cp] = value
+
+cur.execute('select cp, value from LineBreak')
+db["LineBreak"] = dict()
+for cp, value, in cur:
+    db["LineBreak"][cp] = value
 
 def grapheme_cluster_break(u):
-    
-    cur = _conn.cursor()
-    cur.execute('select value from GraphemeClusterBreak where cp = ?',
-                (ord(u),))
-    for value, in cur:
-        return str(value)
+
+    u = ord(u)
+    if u in db["GraphemeClusterBreak"]:
+        return str(db["GraphemeClusterBreak"][u])
     return 'Other'
 
 
@@ -70,11 +90,9 @@ def iter_grapheme_cluster_break_tests():
 
 def word_break(u):
     
-    cur = _conn.cursor()
-    cur.execute('select value from WordBreak where cp = ?',
-                (ord(u),))
-    for value, in cur:
-        return str(value)
+    u = ord(u)
+    if u in db["WordBreak"]:
+        return str(db["WordBreak"][u])
     return 'Other'
 
 
@@ -87,11 +105,9 @@ def iter_word_break_tests():
 
 def sentence_break(u):
     
-    cur = _conn.cursor()
-    cur.execute('select value from SentenceBreak where cp = ?',
-                (ord(u),))
-    for value, in cur:
-        return str(value)
+    u = ord(u)
+    if u in db["SentenceBreak"]:
+        return str(db["SentenceBreak"][u])
     return 'Other'
 
 
@@ -104,11 +120,9 @@ def iter_sentence_break_tests():
 
 def line_break(u):
     
-    cur = _conn.cursor()
-    cur.execute('select value from LineBreak where cp = ?',
-                (ord(u),))
-    for value, in cur:
-        return str(value)
+    u = ord(u)
+    if u in db["LineBreak"]:
+        return str(db["LineBreak"][u])
     return 'Other'
 
 
